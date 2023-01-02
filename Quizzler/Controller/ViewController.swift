@@ -39,22 +39,19 @@ class ViewController: UIViewController {
             sender.backgroundColor = UIColor.red
         }
         
-        if questionNumber + 1 < quiz.count {
-        questionNumber += 1
-        } else {
-            questionNumber = 0
-        }
+        quizBrain.nextQustion()
         
         Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(updateUI), userInfo: nil, repeats: false)
         
     }
     
     @objc func updateUI() {
-        questionLable.text = quiz[questionNumber].text
+        questionLable.text = quizBrain.getQuestionText()
+        progressBar.progress = quizBrain.getProgress()
         trueButton.backgroundColor = UIColor.clear
         falseButton.backgroundColor = UIColor.clear
-        progressBar.progress = Float(questionNumber + 1) / Float(quiz.count)//array.length
-    }
+        
     
 }
 
+}
