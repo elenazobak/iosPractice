@@ -1,5 +1,36 @@
 //new Object /class/ blueprint
 
+struct Question {
+    let text: String
+    let answer: String
+    
+    init(q: String, a: String) {
+    text = q
+        answer = a
+    }
+    
+}
+
+
+
+let quiz = [
+        Question(q: "A slug's blood is green.", a: "True"),
+        Question(q: "Approximately one quarter of human bones are in the feet.", a: "True")
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 struct Town {
     let name = "Angeland"
     var citizens = ["Angela","Jack Bauer"]
