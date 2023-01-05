@@ -1,59 +1,49 @@
 //
 //  ViewController.swift
-//  Quizzler-iOS13
+//  Destini-iOS13
 //
-//  Created by Angela Yu on 12/07/2019.
+//  Created by Angela Yu on 08/08/2019.
 //  Copyright © 2019 The App Brewery. All rights reserved.
 //
 
 import UIKit
-import AVFoundation
 
 class ViewController: UIViewController {
+
+    @IBOutlet weak var storyLabel: UILabel!
+    @IBOutlet weak var choice1Button: UIButton!
+    @IBOutlet weak var choice2Button: UIButton!
     
-    @IBOutlet weak var questionLable: UILabel!
-    @IBOutlet weak var progressBar: UIProgressView!
-    @IBOutlet weak var trueButton: UIButton!
-    @IBOutlet weak var falseButton: UIButton!
+    var storyBrain = StoryBrain()
     
-    @IBOutlet weak var scoreLable: UILabel!
-    //var countdownTimer = Timer()
+   
     
     
-    var quizBrain = QuizBrain() //creating new quizbrain
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         updateUI()
         
+       
     }
 
-    @IBAction func answerButtonPressed(_ sender: UIButton) {
+    @IBAction func choiceMade(_ sender: UIButton) {
+        let userChoice = sender.currentTitle!
+        print(userChoice)
+        storyBrain.nextStory(userChoice)
+        updateUI()
         
-        let userAnswer = sender.currentTitle!
-        let userGotItRight = quizBrain.checkAnswer(userAnswer)
-        
-        if userGotItRight {
-            sender.backgroundColor = UIColor.green
-        } else {
-            sender.backgroundColor = UIColor.red
-        }
-        
-        quizBrain.nextQustion()
-        
-        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(updateUI), userInfo: nil, repeats: false)
-        
+    
     }
     
     @objc func updateUI() {
-        questionLable.text = quizBrain.getQuestionText()
-        progressBar.progress = quizBrain.getProgress()
-        trueButton.backgroundColor = UIColor.clear
-        falseButton.backgroundColor = UIColor.clear
-        scoreLable.text = "Score:\(quizBrain.getScore())"
-        
+        storyLabel.text = storyBrain.getStoryText()
+        choice1Button.setTitle(storyBrain.getChoice1Text(), for: UIControl.State.normal)
+        choice2Button.setTitle(storyBrain.getChoice2Text(), for: UIControl.State.normal)
+
+    }
+    
     
 }
 
-}
