@@ -10,7 +10,6 @@ let skeleton2 = Enemy()
 let skeleton3 = Enemy()
 
 let dragon = Dragon()
-dragon.move()
+
+//dragon.talk(speech: "bla")
 dragon.attack()
-dragon.talk(speech: "bla")
-dragon.move()

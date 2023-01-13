@@ -10,4 +10,8 @@ class Dragon: Enemy {
         print ("fly forward")
     }
     
+    override func attack() {
+        super.attack()
+        print("pshhhhh")
+    }
 }
