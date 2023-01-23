@@ -18,7 +18,7 @@ struct CalculatorBrain {
         let bmiTo1Decimal = String(format: "%.1f", bmi?.value ?? 0.0) //coralesing operator (optionals) chaining
         return bmiTo1Decimal
     }
-    
+    // color literal -> shows color picker
     mutating func calculateBMI(height: Float, weight: Float) {
         let bmiValue = weight / (height * height)
         if bmiValue > 24.9 {
