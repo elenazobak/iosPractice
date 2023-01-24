@@ -21,6 +21,8 @@ class CalculatorViewController: UIViewController {
     @IBOutlet weak var splitNumberLabel: UILabel!
     
     var tip = 0.10
+    var numOfPeople = 0
+    
     
     @IBAction func tipChanged(_ sender: UIButton) {
         zeroPctButton.isSelected = false
@@ -41,19 +43,22 @@ class CalculatorViewController: UIViewController {
         //Divide the percent expressed out of 100 into a decimal e.g. 10 becomes 0.1
         tip = buttonTitleAsANumber / 100
         
-//        switch buttonTitle {
-//        case "0%": prctSelected = 0
-//        case "20%": prctSelected = 20
-//        case "10%": prctSelected = 10
-//        default:
-//            print("Error")
-//
-//        }
+    }
+    
+    @IBAction func stepperChanged(_ sender: UIStepper) {
+        //Get the stepper value using sender.value, round it down to a whole number then set it as the text in
+             //the splitNumberLabel
+             splitNumberLabel.text = String(format: "%.0f", sender.value)
+             
+             //Set the numberOfPeople property as the value of the stepper as a whole number.
+             numOfPeople = Int(sender.value)
         
     }
     
+    
     @IBAction func calculatePressed(_ sender: UIButton) {
         print(tip)
+        print(numOfPeople)
     }
     
 }
