@@ -14,10 +14,17 @@ class ResultsViewController: UIViewController {
     
     @IBOutlet weak var settingsLabel: UILabel!
     
+    
+    var result: String?
+    var numOfPeople: Int?
+    var tip: Int?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        totalLabel.text = result
+        settingsLabel.text = "Split between \(numOfPeople!) people, with \(Int(tip!))% tip."
+        
     }
     
 
@@ -32,5 +39,6 @@ class ResultsViewController: UIViewController {
     */
 
     @IBAction func recalculatePressed(_ sender: Any) {
+        self.dismiss(animated: true)
     }
 }

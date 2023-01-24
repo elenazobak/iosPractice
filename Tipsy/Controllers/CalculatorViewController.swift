@@ -22,9 +22,13 @@ class CalculatorViewController: UIViewController {
     
     var tip = 0.10
     var numOfPeople = 0
+    var result = 1.00
+    var finalResult = "0.0"
     
     
     @IBAction func tipChanged(_ sender: UIButton) {
+        //dismiss keyboard
+        billTextField.endEditing(true)
         zeroPctButton.isSelected = false
         tenPctButton.isSelected = false
         twentyPctButton.isSelected = false
@@ -57,8 +61,29 @@ class CalculatorViewController: UIViewController {
     
     
     @IBAction func calculatePressed(_ sender: UIButton) {
-        print(tip)
-        print(numOfPeople)
+        
+        print(tip) //double
+        print(numOfPeople) //int
+        let intAmount = Double(billTextField.text!)!//doubleAmount
+        print(intAmount) //Double
+        
+        result = intAmount * (1 + tip) / Double(numOfPeople)
+       finalResult = String(format: "%.2f", result)
+        print(result)
+        self.performSegue(withIdentifier: "goToResults", sender: self)
+    }
+    //This method gets triggered just before the segue starts.
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        //If the currently triggered segue is the "goToResults" segue.
+        if segue.identifier == "goToResults" {
+            //Get hold of the instance of the destination VC and type cast it to a ResultViewController.
+            let destinationVC = segue.destination as! ResultsViewController
+            
+            destinationVC.result = finalResult
+            destinationVC.numOfPeople = numOfPeople
+            destinationVC.tip = Int(tip * 100)
+            
+        }
     }
     
 }

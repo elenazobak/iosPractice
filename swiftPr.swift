@@ -2,6 +2,9 @@
 
 ViewDidLoad -  what shown when the app loads
 
+print("\(name) is working hard")//print
+
+
 //RANDOM
   @IBAction func rollButtonPress(_ sender: UIButton) {
         diceImageViewOne.image = [].randomElement()
@@ -139,8 +142,9 @@ func highestScore(scores: [String: Int]) {
 //Don't change this
 highestScore(scores: studentsAndScores)
 
-// round a number to n decimal places
+// round a number (down?) to n decimal places
 // https://www.tutorialspoint.com/swift-program-to-round-a-number-to-n-decimal-places#:~:text=Swift%20provide%20a%20built%2Din%20function%20named%20as%20ceil(),also%20both%20Float%20and%20Double.
 print(String(format: "%.2f", sender.value))
+String(format: "%.0f", sender.value)
        //print(sender.value)
-       //print(round(sender.value * 100)/100.0)
+print(round(sender.value * 100)/100.0)
