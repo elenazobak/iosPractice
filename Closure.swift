@@ -9,6 +9,8 @@ let result = calculator(n1: 2, n2:3) {$0 * $1}
 
 let array = [3,4,6,2,8]
 array.map(addOne)
+
+
 func addOne(n1: Int) -> Int {
     return n1 + 1
 }  // turn to closure \ ->
@@ -16,6 +18,10 @@ func addOne(n1: Int) -> Int {
      {(n1: Int) -> Int 
       in  return n1 + 1
       }  /
+
+
+
+
 
 
 array.map{$0 + 1}
