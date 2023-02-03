@@ -17,7 +17,7 @@ protocol WeatherManagerDelegate {
 
 
 struct WeatherManager {
-    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?&units=metric"
+    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?
     
     var delegate: WeatherManagerDelegate?
     
@@ -34,7 +34,7 @@ struct WeatherManager {
             
             //3. Give the session a task
             
-            let task = session.dataTask(with: url) { (data, response, error) in
+            let task = session.dataTask(with: url) { (data, response, error) in // getting the data from the url
                 if error != nil {
                     delegate?.didFailedWithError(error: error!)
                     return
