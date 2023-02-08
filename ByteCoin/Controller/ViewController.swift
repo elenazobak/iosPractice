@@ -9,8 +9,10 @@
 import UIKit
 
 class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+   
     
-    let coinManager = CoinManager()
+    
+    var coinManager = CoinManager()
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {// number of columns
         return 1
@@ -26,8 +28,9 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-       let selectedCurrency = coinManager.currencyArray[row]
-        coinManager.getCoinPrice(for: selectedCurrency )
+       let selectedCurrency = coinManager.currencyArray[row] // we get the selected row value from the picker
+        print(selectedCurrency)
+        coinManager.getCoinPrice(for: selectedCurrency ) // send it to the url builder
     }
 
     
@@ -42,6 +45,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         super.viewDidLoad()
         currencyPicker.dataSource = self
         currencyPicker.delegate = self
+        //coinManager.delegate = self
     }
 
    
