@@ -55,9 +55,7 @@ extension ViewController: CoinManagerDelegate {
         print(error)
     }
     
-    func didFailWithError(error: Error) {
-        print(error)
-    }
+   
 }
 
 //MARK: - UIPickerView DataSource & Delegate
