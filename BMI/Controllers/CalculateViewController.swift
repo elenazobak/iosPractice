@@ -51,7 +51,7 @@ class CalculateViewController: UIViewController {
         
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) { //pass parameters to next screen
             if segue.identifier == "goToResults" {
                 let destinationVC = segue.destination as! ResultsViewController
                 destinationVC.bmiValue = calculatorBrain.getBMIValue()
