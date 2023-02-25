@@ -9,10 +9,12 @@
 import UIKit
 import Firebase
 
-class ChatViewController: UIViewController {
+class ChatViewController: UIViewController, UITableViewDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageTextfield: UITextField!
+    
+    let db = Firestore.firestore()
     
     var messages: [Message] = [
         Message(sender: "1@2.com", body: "Hey"),
@@ -21,15 +23,57 @@ class ChatViewController: UIViewController {
     ]
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
-       // tableView.delegate = self // we delete the delegate part
+       print (messages.count)
+        tableView.delegate = self // we delete the delegate part
         tableView.dataSource = self
         title = K.appName
         navigationItem.hidesBackButton = true
-
+        
+        tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
+        loadMessages()
+        
+    }
+    
+    func loadMessages() {
+      messages = []
+        
+        db.collection(K.FStore.collectionName).getDocuments { (querySnapshot, error) in
+            if let e = error { //if error is not nill
+                print("There was a problem \(e)")
+            } else {
+                print("Im here")
+                if let snapshotDocuments = querySnapshot?.documents {
+                    for doc in snapshotDocuments {
+                        let data = doc.data()
+                        if let messageSender = data[K.FStore.senderField] as? String, let messageBody = data[K.FStore.bodyField] as? String {
+                            let newMessage = Message(sender: messageSender, body: messageSender)
+                            self.messages.append(newMessage)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
+        if let messageBody = messageTextfield.text, let messageSender = Auth.auth().currentUser?.email {
+            db.collection(K.FStore.collectionName).addDocument(data: [
+                K.FStore.senderField: messageSender,
+                K.FStore.bodyField: messageBody
+            ]) {(error) in
+                if let e = error {
+                    print("There was a problem saving to db\(e)")
+                } else {
+                    print("Successfully saved data")
+                }
+                
+            }
+        }
+        
+        
+        
     }
     
     @IBAction func logOutPressed(_ sender: UIBarButtonItem) {
@@ -49,13 +93,14 @@ class ChatViewController: UIViewController {
 
 extension ChatViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print (messages.count)
+     
         return messages.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath)
-        cell.textLabel?.text = messages[indexPath.row].body
+        as! MessageCell
+        cell.label.text = messages[indexPath.row].body
         return cell
     }
     
