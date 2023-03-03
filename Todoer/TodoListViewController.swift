@@ -11,19 +11,18 @@ class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
     
-    let defaults = UserDefaults.standard // Database
+    let defaults = UserDefaults.standard // Database only for user defaults like volium etc
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let newItem = Item()
-        newItem.title = "Find Mike"
-        newItem.done = false
-        itemArray.append(newItem)
+        loadItems()
         
-        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
-            itemArray = items
-        }
+        //Getting data from our old user defaults
+//        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
+//            itemArray = items
+//        }
         
         
         // *** Nav bar attributes
@@ -71,9 +70,9 @@ class TodoListViewController: UITableViewController {
       
         
         
-        itemArray[indexPath.row].done = !itemArray[indexPath.row].done // each time row selected it changes the "done" value and reloads tableview
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done      // each time row selected it changes the "done" value and reloads tableview
         
-        tableView.reloadData()
+      saveItems()
         
         tableView.deselectRow(at: indexPath, animated: true)
   
@@ -82,23 +81,23 @@ class TodoListViewController: UITableViewController {
     
     //MARK: - Add New Items
     
-    
+    //Plus pressed
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
         var textField = UITextField()
         
         let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
         
-        let action = UIAlertAction(title: "Add item", style: .default) { (action) in
+        let action = UIAlertAction(title: "Add item", style: .default) { (action) in  //closure starts
             
-            // "Add item pressed" - What happens when user clicks Add item on the alert
+            // "Final Add item pressed on the Alert" - What happens when user clicks Add item on the alert
             
             let newItem = Item()
-            newItem.title = textField.text! // giving the name from the text field
+            newItem.title = textField.text!            // Assigning todo title (input from textfield) to item.title
             
             self.itemArray.append(newItem)
-            self.defaults.set(self.itemArray, forKey: "TodoListArray")
-            self.tableView.reloadData()
+            
+            self.saveItems()
         }
         
         alert.addTextField { alertTextField in // Closure triggered only when textfield was added to the alert
@@ -114,8 +113,34 @@ class TodoListViewController: UITableViewController {
     }
     
     
+    //MARK: - Model Manipulation Methods
     
+    func saveItems() {
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to:dataFilePath!)
+        } catch {
+            print("Error encoding item array, \(error)")
+        }
+        
+        //Priveous way - when we were adding an Array of Strings to user defaults
+       // self.defaults.set(self.itemArray, forKey: "TodoListArray")
+        self.tableView.reloadData()
+    }
     
+    func loadItems() {
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding item array, \(error)")
+            }
+        }
+    }
 
 }
 
