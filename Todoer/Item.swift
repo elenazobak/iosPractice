@@ -1,15 +1,11 @@
-//
-//  Item.swift
-//  Todoer
-//
-//  Created by Elena Zobak on 3/1/23.
-//
-
 import Foundation
+import RealmSwift
 
-class Item: Codable {
+
+
+class Item: Object {
+    @objc dynamic var title: String = ""
+    @objc dynamic var done: Bool = false
     
-    var title: String = ""
-    var done: Bool = false
-    
+    var parentCategory = LinkingObjects(fromType: Category.self, property: "items")
 }

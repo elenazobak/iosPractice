@@ -6,37 +6,23 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
+
 
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
+    let realm = try! Realm()
     var selectedCategory : Category? {
         didSet{
             loadItems()
         }
     }
-    
-    //  let defaults = UserDefaults.standard // Database only for user defaults like volium etc
-    // let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist") // Second way of storing small data
-    
-    
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext   //Getting the persistentContainer from our appdelegate.swift
+ 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //searchBar.delegate = self
-        
-
         loadItems()
-        
-        //Getting data from our old user defaults
-        //        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
-        //            itemArray = items
-        //        }
-        let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        print(dataFilePath)
         
         // *** Nav bar attributes
         let appearance = UINavigationBarAppearance()
@@ -59,9 +45,6 @@ class TodoListViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
         let item = itemArray[indexPath.row] // so that we don't have to write it every time
-        
-        // var content = cell.defaultContentConfiguration()
-        // content.text = itemArray[indexPath.row].title
         cell.textLabel?.text = item.title
         
         //Ternary operator ==>
@@ -79,12 +62,6 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // let selectedToDoItem = itemArray[indexPath.row]
         
-        
-        // Delets todo item from list If we want todo disapear when pressed
-       // context.delete(itemArray[indexPath.row])
-       // itemArray.remove(at: indexPath.row)
-     
-        
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done      // each time row selected it changes the "done" value and reloads tableview
         
         saveItems()
@@ -97,38 +74,18 @@ class TodoListViewController: UITableViewController {
     
     //Plus pressed
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
-        
         var textField = UITextField()
-       
-        
         let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
-        
-        
         alert.addTextField { alertTextField in // Closure triggered only when textfield was added to the alert
             alertTextField.placeholder = "Create new item"
-            textField = alertTextField
-            print(alertTextField.text ?? "bla") //Prints empty optional because this action captured in the action complition block
-            
+            textField = alertTextField //Prints empty optional because this action captured in the action complition block
+            print(alertTextField.text ?? "bla")
         }
-        
         let action = UIAlertAction(title: "Add item", style: .default) { (action) in
-            // "Second Add item pressed on the Alert" - user tryes to save
-            //coreData code
-            let newItem = Item(context: self.context)   //ns managed obj - row of our table
-            //   Assigning todo title (input from textfield) to item.title
-            newItem.title = textField.text!
-            newItem.done = false
-            newItem.parentCategory = self.selectedCategory
-            
-            self.itemArray.append(newItem)
-            
+ 
             self.saveItems()
         }
-        
-        
-        
         alert.addAction(action)
-        
         present(alert, animated: true)
     }
     
@@ -159,76 +116,44 @@ class TodoListViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-    
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(),predicate: NSPredicate? = nil) {
-        //let request : NSFetchRequest<Item> = Item.fetchRequest()
-        
-        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-       
-        if let addtionalPredicate = predicate {
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, addtionalPredicate])
-        } else {
-            request.predicate = categoryPredicate
+    func loadItems() {
+            toDoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+            tableView.reloadData()
         }
-        
-        
-        do {
-            itemArray = try context.fetch(request)
-        } catch {
-            print("Error fetching data from context,\(error)")
-        }
-        
-        tableView.reloadData()
-        
-    }
-    
-    //Old func for using codable
-    //    func loadItems() {
-    //        if let data = try? Data(contentsOf: dataFilePath!) {
-    //            let decoder = PropertyListDecoder()
-    //
-    //            do {
-    //                itemArray = try decoder.decode([Item].self, from: data)
-    //            } catch {
-    //                print("Error decoding item array, \(error)")
-    //            }
-    //        }
-    //    }
-
     
 }
 
 //MARK: - Search bar methods
 
-extension TodoListViewController: UISearchBarDelegate {
-    
-    
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
-        
-        let predicate = NSPredicate(format: "title Contains[cd] %@", searchBar.text!)      // title should contain whatever is in the search bar
- // results should come back with the titles in ascending order
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        
-      loadItems(with: request, predicate: predicate)
-    }
-    
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) { // when we press on the x of the search bar
-        if searchBar.text!.count == 0 {
-            loadItems()
-            
-            
-            DispatchQueue.main.async {
-                 searchBar.resignFirstResponder()
-            }
-           
-            
-        }
-    }
-    
-}
+//extension TodoListViewController: UISearchBarDelegate {
+//
+//
+//
+//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//        let request : NSFetchRequest<Item> = Item.fetchRequest()
+//
+//        let predicate = NSPredicate(format: "title Contains[cd] %@", searchBar.text!)      // title should contain whatever is in the search bar
+// // results should come back with the titles in ascending order
+//        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+//
+//      loadItems(with: request, predicate: predicate)
+//    }
+//
+//
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) { // when we press on the x of the search bar
+//        if searchBar.text!.count == 0 {
+//            loadItems()
+//
+//
+//            DispatchQueue.main.async {
+//                 searchBar.resignFirstResponder()
+//            }
+//
+//
+//        }
+//    }
+//
+//}
 
 // for live search option
 //func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
